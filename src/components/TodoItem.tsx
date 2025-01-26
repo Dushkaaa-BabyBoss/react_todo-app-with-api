@@ -28,6 +28,7 @@ export const TodoItem: React.FC<TodoItemProps> = ({
   const handleCheckedTodo = async () => {
     try {
       setLocalTodoLoader(true);
+
       const updatedTodo = { ...todo, completed: !todo.completed };
 
       await updateTodo(updatedTodo);
@@ -137,7 +138,7 @@ export const TodoItem: React.FC<TodoItemProps> = ({
           'is-active':
             (tempoTodo && !todo.id) ||
             isLoading ||
-            toggleLoader ||
+            (toggleLoader && !todo.completed) ||
             localTodoLoader,
         })}
       >
