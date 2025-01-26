@@ -209,15 +209,6 @@ export const App: React.FC = () => {
         {/* show only one message at a time */}
         {error}
       </div>
-      {/* <form>
-        <input
-          data-cy="TodoTitleField"
-          type="text"
-          className="todo__title-field"
-          placeholder="Empty todo will be deleted"
-          value="Todo is being edited now"
-        />
-      </form> */}
     </div>
   );
 };
