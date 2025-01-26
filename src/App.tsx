@@ -22,7 +22,8 @@ export const App: React.FC = () => {
   const [inputValue, setInputValue] = useState('');
   const [tempoTodo, setTempoTodo] = useState<Todo | null>(null);
   const [todoDelete, setTodoDelete] = useState<number[]>([]);
-  const [toggleLoader, setToggleLoader] = useState<boolean>(false);
+  const [toggleLoader, setToggleLoader] = useState(false);
+  const [pageLoad, setPageLoad] = useState(false);
 
   const filteredTodo = todos.filter(todo => {
     if (filter === FilterProps.active) {
@@ -38,6 +39,7 @@ export const App: React.FC = () => {
 
   const activeCount = todos.filter(todo => !todo.completed).length;
   const completedCount = todos.filter(todo => todo.completed).length;
+  const summTodo = activeCount + completedCount;
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -48,11 +50,15 @@ export const App: React.FC = () => {
   }, [error]);
 
   useEffect(() => {
+    setPageLoad(true);
     todoServises
       .getTodos()
       .then(setTodos)
       .catch(() => {
         setError('Unable to load todos');
+      })
+      .finally(() => {
+        setPageLoad(false);
       });
 
     const timer = setTimeout(() => {
@@ -139,6 +145,7 @@ export const App: React.FC = () => {
       );
     } catch {
       setError('Unable to update a todo');
+      throw new Error('Unable to update a todo');
     }
 
     return;
@@ -158,6 +165,8 @@ export const App: React.FC = () => {
           todoDelete={todoDelete}
           updateTodo={updateTodo}
           setToggleLoader={setToggleLoader}
+          pageLoad={pageLoad}
+          summTodo={summTodo}
         />
 
         <TodoList

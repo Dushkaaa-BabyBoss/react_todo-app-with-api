@@ -12,6 +12,8 @@ type HeaderProps = {
   todoDelete: number[];
   updateTodo: (updtateTodo: Todo) => void;
   setToggleLoader: (res: boolean) => void;
+  pageLoad: boolean;
+  summTodo: number;
 };
 
 export const Header: React.FC<HeaderProps> = ({
@@ -23,6 +25,8 @@ export const Header: React.FC<HeaderProps> = ({
   todoDelete,
   updateTodo,
   setToggleLoader,
+  pageLoad,
+  summTodo,
 }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -33,13 +37,14 @@ export const Header: React.FC<HeaderProps> = ({
 
     try {
       await Promise.all(
-        filteredTodo.map(todo => {
-          const updatedTodo = { ...todo, completed: shouldCompletedAll };
+        filteredTodo
+          .filter(todo => todo.completed !== shouldCompletedAll)
+          .map(todo => {
+            const updatedTodo = { ...todo, completed: shouldCompletedAll };
 
-          return updateTodo(updatedTodo);
-        }),
+            return updateTodo(updatedTodo);
+          }),
       );
-    } catch {
     } finally {
       setToggleLoader(false);
     }
@@ -81,14 +86,16 @@ export const Header: React.FC<HeaderProps> = ({
   return (
     <header className="todoapp__header">
       {/* this button should have `active` class only if all todos are completed */}
-      <button
-        type="button"
-        className={classNames('todoapp__toggle-all', {
-          active: filteredTodo.every(todo => todo.completed),
-        })}
-        data-cy="ToggleAllButton"
-        onClick={handleToggleAll}
-      />
+      {!pageLoad && summTodo > 0 && (
+        <button
+          type="button"
+          className={classNames('todoapp__toggle-all', {
+            active: filteredTodo.every(todo => todo.completed),
+          })}
+          data-cy="ToggleAllButton"
+          onClick={handleToggleAll}
+        />
+      )}
 
       {/* Add a todo on form submit */}
       <form onSubmit={handleSubmit}>

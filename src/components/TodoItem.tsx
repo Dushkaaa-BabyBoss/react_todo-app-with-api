@@ -22,20 +22,16 @@ export const TodoItem: React.FC<TodoItemProps> = ({
   isEditing,
   setIsEditingTodoId,
 }) => {
-  const [todoChecked, setTodoChecked] = useState(todo.completed);
-  const [localTodoLoader, setLocalTodoLoader] = useState<boolean>(false);
-  const [editedTitle, setEditedTitle] = useState<string>(todo.title);
+  const [localTodoLoader, setLocalTodoLoader] = useState(false);
+  const [editedTitle, setEditedTitle] = useState(todo.title);
 
   const handleCheckedTodo = async () => {
     try {
       setLocalTodoLoader(true);
-      const updatedTodo = { ...todo, completed: !todoChecked };
+      const updatedTodo = { ...todo, completed: !todo.completed };
 
       await updateTodo(updatedTodo);
-
-      setTodoChecked(!todoChecked);
     } finally {
-      setTodoChecked(!todoChecked);
       setLocalTodoLoader(false);
     }
   };
@@ -55,6 +51,11 @@ export const TodoItem: React.FC<TodoItemProps> = ({
         const updatedTodo = { ...todo, title: trimmetTitle };
 
         await updateTodo(updatedTodo);
+
+        setIsEditingTodoId(null);
+      } catch (error) {
+        setLocalTodoLoader(false);
+        throw error;
       } finally {
         setLocalTodoLoader(false);
       }
@@ -90,7 +91,7 @@ export const TodoItem: React.FC<TodoItemProps> = ({
           data-cy="TodoStatus"
           type="checkbox"
           className="todo__status"
-          checked={todoChecked}
+          checked={todo.completed}
           onClick={handleCheckedTodo}
         />
       </label>
